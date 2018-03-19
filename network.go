@@ -1,5 +1,9 @@
 package addrconv
 
+import (
+	"strings"
+)
+
 type Network struct {
 	Bech32Prefix     string // Human readable part of bech32 addresses
 	PubKeyPrefix     byte   // P2PKH address prefix
@@ -25,4 +29,32 @@ var DigibyteNetwork = Network{
 	WIFPrefix:        0x9e,
 	BIP32PubPrefix:   []byte{0x04, 0x88, 0xb2, 0x1e},
 	BIP32PrivPrefix:  []byte{0x04, 0x88, 0xad, 0xe4},
+}
+
+var LitecoinNetwork = Network{
+	Bech32Prefix:     "ltc",
+	PubKeyPrefix:     0x30,
+	ScriptHashPrefix: 0x32,
+	WIFPrefix:        0xb0,
+	BIP32PubPrefix:   []byte{0x04, 0x88, 0xb2, 0x1e},
+	BIP32PrivPrefix:  []byte{0x04, 0x88, 0xad, 0xe4},
+}
+
+// Returns the predefined network settings for common coins
+// based on the provided coin name
+func GetNetwork(name string) Network {
+	name = strings.ToLower(name)
+	if name == "bitcoin" {
+		return BitcoinNetwork
+	}
+
+	if name == "digibyte" {
+		return DigibyteNetwork
+	}
+
+	if name == "litecoin" {
+		return LitecoinNetwork
+	}
+
+	return BitcoinNetwork
 }
