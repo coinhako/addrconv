@@ -121,3 +121,27 @@ func TestBTCP2PK(t *testing.T) {
 		}
 	}
 }
+
+func TestOPReturn(t *testing.T) {
+	var script blockutils.Script
+	var err error
+
+	var scripts = []string{"6a21e5b88ce69c9be4bda0e698afe4b880e4b8aae69c89e59381e591b3e79a84e4baba"}
+	var addresses = []string{"6a21e5b88ce69c9be4bda0e698afe4b880e4b8aae69c89e59381e591b3e79a84e4baba"}
+
+	for i, v := range scripts {
+
+		script, err = hex.DecodeString(v)
+		if err != nil {
+			t.Errorf("Error decoding hex: %s", err)
+		}
+		address, err := ToNetworkAddress(script, BitcoinNetwork)
+		if err != nil {
+			t.Errorf("Error encoding address: %s", err)
+		}
+
+		if address != addresses[i] {
+			t.Errorf("Incorrect address. Expected %s, got %s", addresses[i], address)
+		}
+	}
+}

@@ -6,6 +6,10 @@ import (
 )
 
 func (network Network) Encode(script blockutils.Script) (string, error) {
+	if script.IsOpReturn() {
+		return script.String(), nil
+	}
+
 	if script.IsP2PK() {
 		hash160, err := script.P2PKHash160()
 		if err != nil {
