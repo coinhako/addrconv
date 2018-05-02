@@ -1,6 +1,7 @@
 package addrconv
 
 import (
+	"github.com/RaghavSood/addrconv/base58"
 	"github.com/RaghavSood/addrconv/bech32"
 	"github.com/RaghavSood/blockutils"
 )
@@ -15,7 +16,7 @@ func (network Network) Encode(script blockutils.Script) (string, error) {
 		if err != nil {
 			return script.String(), err
 		}
-		return CheckEncode(hash160, network.PubKeyPrefix), nil
+		return base58.CheckEncode(hash160, network.PubKeyPrefix), nil
 	}
 
 	if script.IsP2PKH() {
@@ -23,7 +24,7 @@ func (network Network) Encode(script blockutils.Script) (string, error) {
 		if err != nil {
 			return script.String(), err
 		}
-		return CheckEncode(hash160, network.PubKeyPrefix), nil
+		return base58.CheckEncode(hash160, network.PubKeyPrefix), nil
 	}
 
 	if script.IsP2SH() {
@@ -31,7 +32,7 @@ func (network Network) Encode(script blockutils.Script) (string, error) {
 		if err != nil {
 			return script.String(), err
 		}
-		return CheckEncode(hash160, network.ScriptHashPrefix), nil
+		return base58.CheckEncode(hash160, network.ScriptHashPrefix), nil
 	}
 
 	if script.IsWitnessScript() {

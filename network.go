@@ -11,6 +11,7 @@ type Network struct {
 	WIFPrefix        byte   // wif key prefix
 	BIP32PubPrefix   []byte // extended public key prefix
 	BIP32PrivPrefix  []byte // extended private key prefix
+	CashAddrPrefix   string //cashaddr prefix
 }
 
 var BitcoinNetwork = Network{
@@ -20,6 +21,15 @@ var BitcoinNetwork = Network{
 	WIFPrefix:        0x80,
 	BIP32PubPrefix:   []byte{0x04, 0x88, 0xb2, 0x1e},
 	BIP32PrivPrefix:  []byte{0x04, 0x88, 0xad, 0xe4},
+}
+
+var BitcoinCashNetwork = Network{
+	PubKeyPrefix:     0x00,
+	ScriptHashPrefix: 0x05,
+	WIFPrefix:        0x80,
+	BIP32PubPrefix:   []byte{0x04, 0x88, 0xb2, 0x1e},
+	BIP32PrivPrefix:  []byte{0x04, 0x88, 0xad, 0xe4},
+	CashAddrPrefix:   "bitcoincash",
 }
 
 var DigibyteNetwork = Network{
@@ -57,4 +67,12 @@ func GetNetwork(name string) Network {
 	}
 
 	return BitcoinNetwork
+}
+
+func (network Network) SupportsCashAddr() bool {
+	return network.CashAddrPrefix != ""
+}
+
+func (network Network) SupportsBech32() bool {
+	return network.Bech32Prefix != ""
 }
