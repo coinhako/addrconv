@@ -66,6 +66,31 @@ func GetNetwork(name string) Network {
 		return LitecoinNetwork
 	}
 
+	if name == "bitcoincash" {
+		return BitcoinCashNetwork
+	}
+
+	return BitcoinNetwork
+}
+
+func GetNetworkByTicker(ticker string) Network {
+	name := strings.ToLower(ticker)
+	if name == "btc" {
+		return BitcoinNetwork
+	}
+
+	if name == "dgb" {
+		return DigibyteNetwork
+	}
+
+	if name == "ltc" {
+		return LitecoinNetwork
+	}
+
+	if name == "bch" {
+		return BitcoinCashNetwork
+	}
+
 	return BitcoinNetwork
 }
 
