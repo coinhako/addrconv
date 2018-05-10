@@ -19,3 +19,7 @@ type Address struct {
 	Bech32HRP      string
 	CashAddrPrefix string
 }
+
+func (address Address) IsP2SH() bool {
+	return address.Type == P2SH || address.Type == P2SH_P2WPKH || address.Type == P2SH_P2WSH
+}

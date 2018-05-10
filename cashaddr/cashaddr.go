@@ -25,14 +25,6 @@ import (
 
 const CHARSET string = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 
-type AddressType int
-
-// cashaddr (obviously) doesn't support segwit, so we only have two address types
-const (
-	P2PKH AddressType = 0
-	P2SH  AddressType = 1
-)
-
 // charset inversed for decoding
 var CHARSET_REVERSED = [128]int8{
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -60,17 +52,19 @@ func makeLowerCase(c byte) byte {
 	return c | 0x20
 }
 
-func packAddressData(addrType AddressType, addrHash []byte) ([]byte, error) {
+func packAddressData(addrType address.AddressType, addrHash []byte) ([]byte, error) {
 	// Pack addr data with version byte.
-	if addrType != P2PKH && addrType != P2SH {
+	if addrType != address.P2PKH && addrType != address.P2SH {
 		return []byte{}, errors.New("invalid addrtype")
 	}
 
-	// The MSB is always 0
-	// Left shift the address type by 3
-	// If it's a P2PKH, it'll stay 0, but P2SH
-	// Will become 00001000
-	versionByte := uint(addrType) << 3
+	var versionByte uint
+	switch addrType {
+	case address.P2PKH:
+		versionByte = 0
+	case address.P2SH:
+		versionByte = 8
+	}
 
 	// hash can only be of 160 | 192 | 224 | 256 | 320 | 384 | 448 | 512 size
 	size := len(addrHash)
@@ -167,7 +161,7 @@ func Encode(prefix string, payload []byte) string {
 	return ret
 }
 
-func CheckEncodeCashAddress(input []byte, prefix string, t AddressType) string {
+func CheckEncodeCashAddress(input []byte, prefix string, t address.AddressType) string {
 	k, err := packAddressData(t, input)
 	if err != nil {
 		fmt.Printf("%v", err)

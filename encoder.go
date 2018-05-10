@@ -1,8 +1,12 @@
 package addrconv
 
 import (
+	"errors"
+	"fmt"
+	"github.com/RaghavSood/addrconv/address"
 	"github.com/RaghavSood/addrconv/base58"
 	"github.com/RaghavSood/addrconv/bech32"
+	"github.com/RaghavSood/addrconv/cashaddr"
 	"github.com/RaghavSood/blockutils"
 )
 
@@ -61,4 +65,34 @@ func toIntSlice(buf []byte) ([]int, error) {
 		vals[i] = int(buf[i])
 	}
 	return vals, nil
+}
+
+func (network Network) EncodeToBase58(decodedAddress address.Address) (string, error) {
+
+	if decodedAddress.Type == address.P2PKH {
+		return base58.CheckEncode(decodedAddress.Hash, network.PubKeyPrefix), nil
+	}
+
+	if decodedAddress.IsP2SH() {
+		return base58.CheckEncode(decodedAddress.Hash, network.ScriptHashPrefix), nil
+	}
+
+	return "", fmt.Errorf("Unknown address %d type for base58", decodedAddress.Type)
+
+}
+
+func (network Network) EncodeToCashAddr(decodedAddress address.Address) (encodedAddress string, err error) {
+	if !network.SupportsCashAddr() {
+		err = errors.New("Network does not support cashaddr")
+		return encodedAddress, err
+	}
+
+	if decodedAddress.Type != address.P2SH && decodedAddress.Type != address.P2PKH {
+		err = errors.New("cashaddr only supports P2SH and P2PKH addresses")
+		return encodedAddress, err
+	}
+
+	decodedAddress.CashAddrPrefix = network.CashAddrPrefix
+	encodedAddress = cashaddr.CheckEncodeCashAddress(decodedAddress.Hash, decodedAddress.CashAddrPrefix, decodedAddress.Type)
+	return encodedAddress, nil
 }

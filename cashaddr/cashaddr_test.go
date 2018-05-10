@@ -2,6 +2,7 @@ package cashaddr
 
 import (
 	"encoding/hex"
+	"github.com/RaghavSood/addrconv/address"
 	"github.com/RaghavSood/blockutils"
 	"testing"
 )
@@ -13,19 +14,19 @@ func TestCheckEncodeCashAddress(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error decoding hex: %s", err)
 	}
-	address := CheckEncodeCashAddress(script, "bitcoincash", P2PKH)
+	encodedAddress := CheckEncodeCashAddress(script, "bitcoincash", address.P2PKH)
 
-	if address != "bitcoincash:qpha88vmhd36l69d8s8vnp9uzqdqkk5g6cnfvrsf5l" {
-		t.Errorf("Incorrect address. Expected %s, got %s", "bitcoincash:qpha88vmhd36l69d8s8vnp9uzqdqkk5g6cnfvrsf5l", address)
+	if encodedAddress != "bitcoincash:qpha88vmhd36l69d8s8vnp9uzqdqkk5g6cnfvrsf5l" {
+		t.Errorf("Incorrect address. Expected %s, got %s", "bitcoincash:qpha88vmhd36l69d8s8vnp9uzqdqkk5g6cnfvrsf5l", encodedAddress)
 	}
 
 	script, err = hex.DecodeString("4aef67ed61d391d6f3d9903ead92386c1efc9925")
 	if err != nil {
 		t.Errorf("Error decoding hex: %s", err)
 	}
-	address = CheckEncodeCashAddress(script, "bitcoincash", P2SH)
+	encodedAddress = CheckEncodeCashAddress(script, "bitcoincash", address.P2SH)
 
-	if address != "bitcoincash:pp9w7eldv8fer4hnmxgratvj8pkpalyey5qym9j8x5" {
-		t.Errorf("Incorrect address. Expected %s, got %s", "bitcoincash:pp9w7eldv8fer4hnmxgratvj8pkpalyey5qym9j8x5", address)
+	if encodedAddress != "bitcoincash:pp9w7eldv8fer4hnmxgratvj8pkpalyey5qym9j8x5" {
+		t.Errorf("Incorrect address. Expected %s, got %s", "bitcoincash:pp9w7eldv8fer4hnmxgratvj8pkpalyey5qym9j8x5", encodedAddress)
 	}
 }
