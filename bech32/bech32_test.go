@@ -20,7 +20,7 @@
 package bech32_test
 
 import (
-	"bech32"
+	"github.com/RaghavSood/addrconv/bech32"
 	"reflect"
 	"strings"
 	"testing"
