@@ -3,6 +3,7 @@ package cashaddr
 import (
 	"errors"
 	"fmt"
+	"github.com/RaghavSood/addrconv/address"
 	// "encoding/hex"
 	// "encoding/binary"
 )
@@ -48,6 +49,15 @@ var CHARSET_REVERSED = [128]int8{
  */
 func Concat(x, y []byte) []byte {
 	return append(x, y...)
+}
+
+/**
+ * Convert to lower case.
+ *
+ * Assumes the input is a character.
+ */
+func makeLowerCase(c byte) byte {
+	return c | 0x20
 }
 
 func packAddressData(addrType AddressType, addrHash []byte) ([]byte, error) {
@@ -111,6 +121,13 @@ func packAddressData(addrType AddressType, addrHash []byte) ([]byte, error) {
 }
 
 /**
+ * Verify a checksum.
+ */
+func VerifyChecksum(prefix string, payload []byte) bool {
+	return PolyMod(Concat(ExpandPrefix(prefix), payload)) == 0
+}
+
+/**
  * Create a checksum.
  */
 func CreateChecksum(prefix string, payload []byte) []byte {
@@ -171,6 +188,113 @@ func ExpandPrefix(prefix string) []byte {
 
 	ret[len(prefix)] = 0
 	return ret
+}
+
+// CheckDecode decodes a string that was encoded with CheckEncode and verifies the checksum.
+func CheckDecodeCashAddress(input string) (decodedAddress address.Address, err error) {
+	prefix, data, err := DecodeCashAddress(input)
+	if err != nil {
+		return decodedAddress, err
+	}
+	data, err = convertBits(data, 5, 8, false)
+	if err != nil {
+		return decodedAddress, err
+	}
+	if len(data) != 21 {
+		return decodedAddress, errors.New("Incorrect data length")
+	}
+
+	switch data[0] {
+	case 0x00:
+		decodedAddress.Type = address.P2PKH
+	case 0x08:
+		decodedAddress.Type = address.P2SH
+	}
+
+	decodedAddress.Hash = data[1:21]
+	decodedAddress.CashAddrPrefix = prefix
+
+	return decodedAddress, nil
+}
+
+/**
+ * Decode a cashaddr string.
+ */
+func DecodeCashAddress(str string) (string, []byte, error) {
+	// Go over the string and do some sanity checks.
+	lower, upper := false, false
+	prefixSize := 0
+	for i := 0; i < len(str); i++ {
+		c := byte(str[i])
+		if c >= 'a' && c <= 'z' {
+			lower = true
+			continue
+		}
+
+		if c >= 'A' && c <= 'Z' {
+			upper = true
+			continue
+		}
+
+		if c >= '0' && c <= '9' {
+			// We cannot have numbers in the prefix.
+			if prefixSize == 0 {
+				return "", []byte{}, errors.New("Addresses cannot have numbers in the prefix")
+			}
+
+			continue
+		}
+
+		if c == ':' {
+			// The separator must not be the first character, and there must not
+			// be 2 separators.
+			if i == 0 || prefixSize != 0 {
+				return "", []byte{}, errors.New("The separator must not be the first character")
+			}
+
+			prefixSize = i
+			continue
+		}
+
+		// We have an unexpected character.
+		return "", []byte{}, errors.New("Unexpected character")
+	}
+
+	// We must have a prefix and a data part and we can't have both uppercase
+	// and lowercase.
+	if prefixSize == 0 {
+		return "", []byte{}, errors.New("Address must have a prefix")
+	}
+
+	if upper && lower {
+		return "", []byte{}, errors.New("Addresses cannot use both upper and lower case characters")
+	}
+
+	// Get the prefix.
+	var prefix string
+	for i := 0; i < prefixSize; i++ {
+		prefix += string(makeLowerCase(str[i]))
+	}
+
+	// Decode values.
+	valuesSize := len(str) - 1 - prefixSize
+	values := make([]byte, valuesSize)
+	for i := 0; i < valuesSize; i++ {
+		c := byte(str[i+prefixSize+1])
+		// We have an invalid char in there.
+		if c > 127 || CHARSET_REVERSED[c] == -1 {
+			return "", []byte{}, errors.New("Invalid character")
+		}
+
+		values[i] = byte(CHARSET_REVERSED[c])
+	}
+
+	// Verify the checksum.
+	if !VerifyChecksum(prefix, values) {
+		return "", []byte{}, errors.New("Inavlid checksum")
+	}
+
+	return prefix, values[:len(values)-8], nil
 }
 
 // This is from the bech32 package, which is from github.com/sipa

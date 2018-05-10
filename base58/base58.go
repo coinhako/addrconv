@@ -2,6 +2,7 @@ package base58
 
 import (
 	"errors"
+	"github.com/RaghavSood/addrconv/address"
 	"github.com/RaghavSood/blockutils"
 	"math/big"
 )
@@ -112,18 +113,27 @@ func decode(b string) []byte {
 }
 
 // CheckDecode decodes a string that was encoded with CheckEncode and verifies the checksum.
-func CheckDecode(input string) (result []byte, version byte, err error) {
+func CheckDecode(input string) (decodedAddress address.Address, err error) {
 	decoded := decode(input)
 	if len(decoded) < 5 {
-		return nil, 0, errors.New("Invalid format")
+		return decodedAddress, errors.New("Invalid format")
 	}
-	version = decoded[0]
+	version := decoded[0]
 	var cksum [4]byte
 	copy(cksum[:], decoded[len(decoded)-4:])
 	if checksum(decoded[:len(decoded)-4]) != cksum {
-		return nil, 0, errors.New("Invalid checksum")
+		return decodedAddress, errors.New("Invalid checksum")
 	}
 	payload := decoded[1 : len(decoded)-4]
-	result = append(result, payload...)
+	// result := append(result, payload...)
+
+	decodedAddress.Hash = payload
+	switch version {
+	case 0x00:
+		decodedAddress.Type = address.P2PKH
+	case 0x05:
+		decodedAddress.Type = address.P2SH
+	}
+
 	return
 }

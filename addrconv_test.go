@@ -2,6 +2,7 @@ package addrconv
 
 import (
 	"encoding/hex"
+	"github.com/RaghavSood/addrconv/address"
 	"github.com/RaghavSood/blockutils"
 	"testing"
 )
@@ -149,20 +150,41 @@ func TestOPReturn(t *testing.T) {
 func TestDecodeAddress(t *testing.T) {
 	var scripts = []string{"f7b11fa0d7cad927d47183e14580fd63418d77e5", "c91b3f1306c9b7b4c0fcfc4ac9a3b22d20145b19"}
 	var addresses = []string{"1Pag69EdPN95wGYbKUDb2YxPz9QJbskeTh", "3L2NPDLsrqCycMt1Q7t9fLWqEmPKrnVWT1"}
-	var versions = []byte{0x00, 0x05}
+	var versions = []address.AddressType{address.P2PKH, address.P2SH}
 
 	for i, v := range addresses {
-		addressScript, version, err := FromAddress(v)
+		decodedAddress, err := FromAddress(v)
 		if err != nil {
 			t.Errorf("Error encoding address: %s", err)
 		}
-		script := blockutils.Script(addressScript)
+		script := blockutils.Script(decodedAddress.Hash)
 		if script.String() != scripts[i] {
-			t.Errorf("Incorrect address. Expected %s, got %s", scripts[i], addressScript)
+			t.Errorf("Incorrect address. Expected %s, got %s", scripts[i], script)
 		}
 
-		if version != versions[i] {
-			t.Errorf("Incorrect address version. Expected %#x, got %#x", versions[i], version)
+		if decodedAddress.Type != versions[i] {
+			t.Errorf("Incorrect address version. Expected %#x, got %#x", versions[i], decodedAddress.Type)
+		}
+	}
+}
+
+func TestDecodeCashAddr(t *testing.T) {
+	var scripts = []string{"f7b11fa0d7cad927d47183e14580fd63418d77e5", "c91b3f1306c9b7b4c0fcfc4ac9a3b22d20145b19"}
+	var addresses = []string{"qrmmz8aq6l9djf75wxp7z3vql435rrthu585v8rw25", "bitcoincash:pry3k0cnqmym0dxqln7y4jdrkgkjq9zmryfgd27srj"}
+	var versions = []address.AddressType{address.P2PKH, address.P2SH}
+
+	for i, v := range addresses {
+		decodedAddress, err := FromNetworkAddress(v, BitcoinCashNetwork)
+		if err != nil {
+			t.Errorf("Error encoding address: %s", err)
+		}
+		script := blockutils.Script(decodedAddress.Hash)
+		if script.String() != scripts[i] {
+			t.Errorf("Incorrect address. Expected %s, got %s", scripts[i], script)
+		}
+
+		if decodedAddress.Type != versions[i] {
+			t.Errorf("Incorrect address version. Expected %#x, got %#x", versions[i], decodedAddress.Type)
 		}
 	}
 }

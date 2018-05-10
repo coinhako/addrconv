@@ -1,6 +1,7 @@
 package addrconv
 
 import (
+	"github.com/RaghavSood/addrconv/address"
 	"github.com/RaghavSood/blockutils"
 )
 
@@ -12,10 +13,10 @@ func ToNetworkAddress(script blockutils.Script, network Network) (string, error)
 	return network.Encode(script)
 }
 
-func FromAddress(address string) ([]byte, byte, error) {
+func FromAddress(address string) (address.Address, error) {
 	return FromNetworkAddress(address, BitcoinNetwork)
 }
 
-func FromNetworkAddress(address string, network Network) ([]byte, byte, error) {
+func FromNetworkAddress(address string, network Network) (address.Address, error) {
 	return network.Decode(address)
 }
