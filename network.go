@@ -50,6 +50,14 @@ var LitecoinNetwork = Network{
 	BIP32PrivPrefix:  []byte{0x04, 0x88, 0xad, 0xe4},
 }
 
+var ZcoinNetwork = Network{
+	PubKeyPrefix:     0x52,
+	ScriptHashPrefix: 0x07,
+	WIFPrefix:        0xd2,
+	BIP32PubPrefix:   []byte{0x04, 0x88, 0xb2, 0x1e},
+	BIP32PrivPrefix:  []byte{0x04, 0x88, 0xad, 0xe4},
+}
+
 // Returns the predefined network settings for common coins
 // based on the provided coin name
 func GetNetwork(name string) Network {
@@ -68,6 +76,10 @@ func GetNetwork(name string) Network {
 
 	if name == "bitcoincash" {
 		return BitcoinCashNetwork
+	}
+
+	if name == "zcoin" {
+		return ZcoinNetwork
 	}
 
 	return BitcoinNetwork

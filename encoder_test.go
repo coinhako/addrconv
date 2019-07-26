@@ -32,6 +32,18 @@ func TestEncodeToBase58(t *testing.T) {
 	if encodedAddress != "38XEixUj1QpcqxTWbxvqdbv4Mjre4imw9Z" {
 		t.Errorf("Incorrect address. Expected %s, got %s", "38XEixUj1QpcqxTWbxvqdbv4Mjre4imw9Z", encodedAddress)
 	}
+
+	decodedAddress.Hash, _ = hex.DecodeString("b619de6e0a35d6d4f9ec93c77f23784dd1388971")
+	decodedAddress.Type = address.P2PKH
+
+	encodedAddress, err = ZcoinNetwork.EncodeToBase58(decodedAddress)
+	if err != nil {
+		t.Errorf("Error encoding address: %s", err)
+	}
+
+	if encodedAddress != "aHKKiDdEAYQjjbEgJMSUpdkapz4hVUUCHR" {
+		t.Errorf("Incorrect address. Expected %s, got %s", "aHKKiDdEAYQjjbEgJMSUpdkapz4hVUUCHR", encodedAddress)
+	}
 }
 
 func TestEncodeToCashAddr(t *testing.T) {
