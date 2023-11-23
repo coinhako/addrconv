@@ -3,7 +3,8 @@ package cashaddr
 import (
 	"errors"
 	"fmt"
-	"github.com/RaghavSood/addrconv/address"
+
+	"github.com/coinhako/addrconv/address"
 	// "encoding/hex"
 	// "encoding/binary"
 )

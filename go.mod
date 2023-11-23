@@ -1,8 +1,8 @@
-module github.com/RaghavSood/addrconv
+module github.com/coinhako/addrconv
 
 go 1.12
 
 require (
-	github.com/RaghavSood/blockutils v0.0.0-20181122092155-16e99581445b
-	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
+	github.com/coinhako/blockutils v0.0.0-20190726112154-ec422ef3a108
+	golang.org/x/crypto v0.15.0 // indirect
 )

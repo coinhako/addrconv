@@ -2,9 +2,10 @@ package base58
 
 import (
 	"errors"
-	"github.com/RaghavSood/addrconv/address"
-	"github.com/RaghavSood/blockutils"
 	"math/big"
+
+	"github.com/coinhako/addrconv/address"
+	"github.com/coinhako/blockutils"
 )
 
 var bigRadix = big.NewInt(58)

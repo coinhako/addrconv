@@ -3,11 +3,12 @@ package addrconv
 import (
 	"errors"
 	"fmt"
-	"github.com/RaghavSood/addrconv/address"
-	"github.com/RaghavSood/addrconv/base58"
-	"github.com/RaghavSood/addrconv/bech32"
-	"github.com/RaghavSood/addrconv/cashaddr"
-	"github.com/RaghavSood/blockutils"
+
+	"github.com/coinhako/addrconv/address"
+	"github.com/coinhako/addrconv/base58"
+	"github.com/coinhako/addrconv/bech32"
+	"github.com/coinhako/addrconv/cashaddr"
+	"github.com/coinhako/blockutils"
 )
 
 func (network Network) Encode(script blockutils.Script) (string, error) {

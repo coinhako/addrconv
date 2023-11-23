@@ -1,8 +1,8 @@
 package addrconv
 
 import (
-	"github.com/RaghavSood/addrconv/address"
-	"github.com/RaghavSood/blockutils"
+	"github.com/coinhako/addrconv/address"
+	"github.com/coinhako/blockutils"
 )
 
 func ToAddress(script blockutils.Script) (string, error) {

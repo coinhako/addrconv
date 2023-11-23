@@ -2,8 +2,9 @@ package addrconv
 
 import (
 	"encoding/hex"
-	"github.com/RaghavSood/addrconv/address"
 	"testing"
+
+	"github.com/coinhako/addrconv/address"
 )
 
 func TestEncodeToBase58(t *testing.T) {

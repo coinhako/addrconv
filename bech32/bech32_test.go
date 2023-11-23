@@ -20,10 +20,11 @@
 package bech32_test
 
 import (
-	"github.com/RaghavSood/addrconv/bech32"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/coinhako/addrconv/bech32"
 )
 
 func segwitScriptpubkey(version int, program []int) []int {

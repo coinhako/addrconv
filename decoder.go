@@ -2,10 +2,11 @@ package addrconv
 
 import (
 	"errors"
-	"github.com/RaghavSood/addrconv/address"
-	"github.com/RaghavSood/addrconv/base58"
-	"github.com/RaghavSood/addrconv/cashaddr"
 	"strings"
+
+	"github.com/coinhako/addrconv/address"
+	"github.com/coinhako/addrconv/base58"
+	"github.com/coinhako/addrconv/cashaddr"
 )
 
 func (network Network) Decode(encodedAddress string) (address.Address, error) {

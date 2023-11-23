@@ -2,9 +2,10 @@ package cashaddr
 
 import (
 	"encoding/hex"
-	"github.com/RaghavSood/addrconv/address"
-	"github.com/RaghavSood/blockutils"
 	"testing"
+
+	"github.com/coinhako/addrconv/address"
+	"github.com/coinhako/blockutils"
 )
 
 func TestCheckEncodeCashAddress(t *testing.T) {
